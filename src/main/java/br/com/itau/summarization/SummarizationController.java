@@ -6,30 +6,30 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/")
+@RequestMapping("/summarizarion")
 public class SummarizationController {
 
 	@Autowired
-	private TopUsersByFollowerCount topUsersByFollowerCount;
+	private TopUsersByFollowerCountSummarization topUsersByFollowerCountSummarization;
 	
 	@Autowired
-	private TweetCountByHashtagAndLanguage tweetCountByHashtagAndLanguage;
+	private TweetCountByHashtagAndLanguageSummarization tweetCountByHashtagAndLanguageSummarization;
 	
 	@Autowired
-	private TweetCountByHour tweetCountByHour;
+	private TweetCountByHourSummarization tweetCountByHourSummarization;
 
 	@RequestMapping(method = RequestMethod.GET, value = "/top-users")
 	public void topUsers() {
-		topUsersByFollowerCount.updateTopUsers();
+		topUsersByFollowerCountSummarization.updateTopUsers();
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/tweet-count-by-hashtag-and-language")
 	public void tweetCountByHashtagAndLanguage() {
-		tweetCountByHashtagAndLanguage.updateTweetCountByHashtagAndLanguage();
+		tweetCountByHashtagAndLanguageSummarization.updateTweetCountByHashtagAndLanguage();
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/tweet-count-by-hour")
 	public void tweetCountByHour() {
-		tweetCountByHour.updateTweetCountByHour();
+		tweetCountByHourSummarization.updateTweetCountByHour();
 	}
 }

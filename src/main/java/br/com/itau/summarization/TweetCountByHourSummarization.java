@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 import br.com.itau.spark.SparkConnection;
 
 @Component
-public class TweetCountByHour {
+public class TweetCountByHourSummarization {
 
 	@Autowired
 	private SparkConnection sparkConnection;
