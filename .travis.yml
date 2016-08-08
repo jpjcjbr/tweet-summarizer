@@ -1,3 +1,20 @@
+sudo: required
+services:
+  - docker
 language: java
 jdk:
   - oraclejdk8
+env:
+  global:
+    - secure: "M55QnPUrS3IHX8HQJUSGzm6y9Qb84rGL0UO6BPFfmZZ3S/0qRJ7mzo5tbVt+hSZAjkG7EjHFjnPw/OhRPEllhaWvRbW5Ih4gds8XRPxG5SC4PT7s/QXEgQRHVBBuxcEva0Vk7txAgWHyMa2GkSZsKtk2s5fVgosWMorGBZ0tcG57q7bnFoR21qzXCR8jOnYLOvTjEIvbnjpbxhtNEh2jeM9J76OrjVP9imFf9sGGxHWCpcQe40QdF6/DI3NNS6wyWmGsvGT+gEVRIBzI/BfgF+qm3ek2MF74zvxqrjqvC1IgXYTYpMSNNiTAoaaee8JGeVTd2Abd7t60v5vG4zpU72XhOcVSdiqVZ5zPRZtr2sGpEa4qiucjZMTqU0rnyF6OS/tcoVoZnW2D/K05sXYN5csLdRvnydqHjZrKj8CeOYfu8OXnqRYeIGx59y4X2nUR36vhOsewIDUQ/HIRkNEWfFhZk797kUbcBinuFQZLz2qxua+PJCPViob5AIdsnGLCaJQa4LBYDR5B0KCCKP1vfKRj5rWCXi6oPmjlT8rquKx4hxM1EoejEZeBWRxRcxAYC84RMllcvAcv/qi1SLvgY1eozCdFArUcT2qe7FyITMhySphUzLUGWT5Kgcpmj+rpaiDrU+Yw7qKCpfROgIH54jFJOwuPOidmDpOE06kvJic=" # DOCKER_EMAIL
+    - secure: "x9WwUsaq7kPTxwsXKTOdEdpFzriewHjo/wgUzAzTBr+GgDmNBAV3hO59Pftxy2p6j0EwB6CprwH1f0aWOx4fRpHQsxJYfTfoQXz/usDP6UhvmmuyBgK6f5C2AL/9IeVZDxqs6rnTaGQG1HHbmFtwLATGIZZ8QS2D8r+GYQ9k08bAVvesDiiUqLCZQ3kBD5HV2qjXIKvDyXP5J6ox6OgszWEpfCS6irhaT8lfrbdg6ABadcVMeuErGCpV77hsUIuezMXaCcNdZ2/ING8EFr008RNp5g4VX8mJdbtwV9vbUC3f5UgzSE2cpXHVeXCxVebcXH/a1BcD7zEmgfTIowxVFa05EgE6BJN5qUQOBBPuJ7v2fKfqlnrAEWdjYolqpGYoShKzF3buvzrWJbHkU1IWhlwfNNJkpsbHhJFpstigpDf0H6mCXQpAV75UvdYurwY3xMLOkP6n3nqV19q70Lew41gbO7Ys3gK/lwAKPG26MQHy5Gb4ATNBKTuTrQ1rF8oaTV7+XcmBROiU1uYHtsDiCW2KzzJDtrO8uVo62LhsuQRqtrfzStGJ1RkfaPu4qC+eHp6k67nBM0jMYPZ3gCzANxaTnvwEAdlXF3koH+yoi2IAE9GYDatF7xwx1p69wTcAvWUrKXc7Ib4AfY1VNhno0HvBpSbKEFWtNthEtdBlCX8=" # DOCKER_USER
+    - secure: "Tf8SPLgDl64/EQQUcOBY89y+OJNLu7H73GGPVibayKSE+5AsVAQ6SrOMOg0vcLWKIEfJKl9Qk8ZSrfoz4oTEPU3ywGK9t11fLs2ayAiTKQ67tDji+vB79WfSlQzxa1+lGsoQhcWnOfhAsr+Mh+oRT2US/eChLWLSAkSpiQ42ivDeZJVFseR3UiiB0pg7YtXixKRvmxqWm6bQBHvDpSGCtNzp3QWvSliFjPiilvx9gzD4HKNfMHjeY9KZSPyeSvKsvXrnZJ6tdDUdENyuHA0CvMFuJUWXKMqlMBzoBrsEhcUiiO/hFh3HJUofugwuez022FZkZN3il3r08nnngoleoVD024/Eet72O630w7e3tl9eDHxz+kxHPd9ImAsr2W4qPaxghAnMONvp3UkWsyI4FSq6rdPybuFaX01hiSSOJQoxB+86Ho4X6sQ6eBVG21kEXeparKxL5rPafPAiBngZJyJpR9hwY4vmBZ1V1me0HqaQu52Dt433WArtnWkpwRmi/J65PWEwaKSgcLeMWlbZnZfVlXHWv7kFmrMAO0pSXfwe1Fq9hFIzxVSSQPtnqq1QRz5Mqr37XpurbpKAYhjsoXo4ripaacPGov8GRG9wQNJX2oBiaZKf6zwobHDmvv9j9mCl+ZegRKOwjefXfeSWl6x6CeXPYVQPHUtVkCBQ38w=" # DOCKER_PASS
+    - COMMIT=${TRAVIS_COMMIT::8}
+after_success:
+  - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
+  - export REPO=jpjcjbr/tweet-summarizer
+  - export TAG=`if [ "$TRAVIS_BRANCH" == "master" ]; then echo "latest"; else echo $TRAVIS_BRANCH ; fi`
+  - docker build -f Dockerfile -t $REPO:$COMMIT .
+  - docker tag $REPO:$COMMIT $REPO:$TAG
+  - docker tag $REPO:$COMMIT $REPO:travis-$TRAVIS_BUILD_NUMBER
+  - docker push $REPO
